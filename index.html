@@ -1,0 +1,2181 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaultMind AI - Bank Xavfsizlik Platformasi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --dark-card: #1e293b;
+            --light: #f1f5f9;
+            --gray: #64748b;
+            --gray-light: #cbd5e1;
+            --border-radius: 12px;
+            --shadow: 0 8px 24px rgba(0,0,0,0.3);
+            --glow: 0 0 15px rgba(59, 130, 246, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+            animation-duration: 15s;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--gray-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: var(--gray-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a:hover, nav a.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            text-decoration: none;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--glow);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-light);
+            border: 1.5px solid var(--gray);
+        }
+
+        .btn-outline:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.8));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            animation: pulseBackground 8s ease-in-out infinite;
+        }
+
+        .hero > .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, white, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideUp 1s ease-out 0.2s both;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--gray-light);
+            animation: slideUp 1s ease-out 0.4s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            animation: slideUp 1s ease-out 0.6s both;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        .section {
+            padding: 3rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem 1rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out both;
+            cursor: pointer;
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .feature-card.expanded {
+            max-height: 1000px;
+            padding-bottom: 2rem;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .feature-card p {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .feature-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .feature-card.expanded .feature-details {
+            max-height: 500px;
+        }
+
+        .feature-details ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .feature-details li {
+            margin-bottom: 0.5rem;
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .feature-details li::before {
+            content: "•";
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+        }
+
+        .dashboard {
+            background: var(--darker);
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .dashboard-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+            color: white;
+            animation: slideLeft 1s ease-out both;
+        }
+
+        .dashboard-content p {
+            color: var(--gray-light);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            animation: slideLeft 1s ease-out 0.2s both;
+        }
+
+        .dashboard-image {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideRight 1s ease-out both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 1.2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            animation: scaleIn 0.6s ease-out both;
+            cursor: pointer;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .stat-card.expanded {
+            max-height: 500px;
+        }
+
+        .stat-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateY(-5px) scale(1.05);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-light);
+        }
+
+        .stat-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            text-align: left;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .stat-card.expanded .stat-details {
+            max-height: 400px;
+        }
+       
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .analytics-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .analytics-card h3 {
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.1rem;
+        }
+
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+
+   
+        .transaction-list {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .transaction-header {
+            display: none; 
+        }
+
+        .transaction-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 0.5rem;
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            font-size: 0.9rem;
+            animation: slideInRight 0.6s ease-out both;
+            cursor: pointer;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .transaction-item.expanded {
+            max-height: 500px;
+        }
+
+        .transaction-item:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .transaction-item:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
+
+        .transaction-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateX(5px);
+        }
+
+        .transaction-item > div:nth-child(1)::before {
+            content: "ID: ";
+            color: var(--gray);
+        }
+
+        .transaction-item > div:nth-child(2)::before {
+            content: "Summa: ";
+            color: var(--gray);
+        }
+
+        .transaction-item > div:nth-child(3)::before {
+            content: "Xavf: ";
+            color: var(--gray);
+        }
+
+        .transaction-details {
+            grid-column: 1 / -1;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .transaction-item.expanded .transaction-details {
+            max-height: 400px;
+        }
+
+        .risk-high { 
+            color: var(--danger); 
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        .risk-medium { 
+            color: var(--warning); 
+            font-weight: 600;
+        }
+        .risk-low { 
+            color: var(--secondary); 
+            font-weight: 600;
+        }
+
+        .alert-container {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .alert-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            animation: slideInLeft 0.6s ease-out both;
+            cursor: pointer;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .alert-item.expanded {
+            max-height: 500px;
+        }
+
+        .alert-item:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .alert-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateX(-5px);
+        }
+
+        .alert-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .alert-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            animation: bounce 1s infinite;
+        }
+
+        .alert-danger { background: var(--danger); }
+        .alert-warning { background: var(--warning); }
+        .alert-success { background: var(--secondary); }
+
+        .alert-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .alert-item.expanded .alert-details {
+            max-height: 400px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tool-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            animation: slideUp 0.6s ease-out both;
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.1s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+
+        .form-control {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: scale(1.02);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .result-box {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 0.9rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            min-height: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        footer {
+            background: var(--darker);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 0.8s ease-out both;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column {
+            animation: slideUp 0.6s ease-out both;
+        }
+
+        .footer-column:nth-child(2) { animation-delay: 0.1s; }
+        .footer-column:nth-child(3) { animation-delay: 0.2s; }
+        .footer-column:nth-child(4) { animation-delay: 0.3s; }
+
+        .footer-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: var(--secondary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.6rem;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li:hover {
+            transform: translateX(5px);
+        }
+
+        .footer-column a {
+            color: var(--gray-light);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes pulseBackground {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary) }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            z-index: 2000;
+            transition: var(--transition);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            color: var(--gray-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .mobile-menu-close:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: white;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav a {
+            color: var(--gray-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+            display: block;
+            font-size: 1rem;
+        }
+
+        .mobile-nav a:hover, .mobile-nav a.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .problem-section {
+            background: var(--darker);
+        }
+
+        .problem-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .problem-type {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            animation: slideUp 0.8s ease-out both;
+            cursor: pointer;
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .problem-type.expanded {
+            max-height: 1000px;
+        }
+
+        .problem-type:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-type h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .problem-type ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .problem-type li {
+            margin-bottom: 0.5rem;
+            color: var(--gray-light);
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .problem-type li::before {
+            content: "•";
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+        }
+
+        .problem-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .problem-type.expanded .problem-details {
+            max-height: 700px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            animation: slideUp 0.8s ease-out both;
+            text-align: center;
+            cursor: pointer;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .team-member.expanded {
+            max-height: 500px;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-member h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .team-member .role {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .team-member .skills {
+            color: var(--gray-light);
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .team-member .status {
+            color: var(--warning);
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .team-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .team-member.expanded .team-details {
+            max-height: 300px;
+        }
+
+        /* Roadmap Section */
+        .roadmap-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 2rem auto 0;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+
+        .roadmap-item {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 2rem;
+            animation: slideRight 0.8s ease-out both;
+            cursor: pointer;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .roadmap-item.expanded {
+            max-height: 500px;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--dark);
+        }
+
+        .roadmap-item.current::before {
+            background: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+
+        .roadmap-item h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .roadmap-item.current h4 {
+            color: var(--secondary);
+        }
+
+        .roadmap-item p {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .roadmap-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .roadmap-item.expanded .roadmap-details {
+            max-height: 400px;
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .guide-item {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            animation: slideUp 0.8s ease-out both;
+            cursor: pointer;
+            max-height: 150px;
+            overflow: hidden;
+        }
+
+        .guide-item.expanded {
+            max-height: 500px;
+        }
+
+        .guide-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .guide-item .number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .guide-item p {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .guide-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 1rem;
+            color: var(--gray-light);
+            font-size: 0.85rem;
+        }
+
+        .guide-item.expanded .guide-details {
+            max-height: 350px;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav, .desktop-auth {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 0.95rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-buttons .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            .transaction-item {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                gap: 0.8rem;
+            }
+            
+            .transaction-item > div::before {
+                display: inline-block;
+                width: 80px;
+            }
+            
+            .alert-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .alert-info {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu-toggle, .mobile-menu, .overlay {
+                display: none;
+            }
+            
+            .dashboard-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+            
+            .transaction-header {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                padding: 1.2rem 1.5rem;
+                background: rgba(15, 23, 42, 0.5);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                font-weight: 600;
+                color: var(--primary);
+                font-size: 0.9rem;
+            }
+            
+            .transaction-item {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                padding: 1.2rem 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                transition: var(--transition);
+                font-size: 0.9rem;
+            }
+            
+            .transaction-item > div::before {
+                content: none;
+            }
+            
+            .alert-item {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="floating-bg">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+ 
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">VaultMind AI</div>
+            </div>
+
+         
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#problem" class="active">Muammo</a></li>
+                    <li><a href="#solution">Yechim</a></li>
+                    <li><a href="#team">Jamoa</a></li>
+                    <li><a href="#roadmap">Yo'l xaritasi</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                </ul>
+            </nav>
+
+           
+
+          
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">VaultMind AI</div>
+            </div>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav">
+            <ul>
+                <li><a href="#problem" class="active">Muammo</a></li>
+                <li><a href="#solution">Yechim</a></li>
+                <li><a href="#team">Jamoa</a></li>
+                <li><a href="#roadmap">Yo'l xaritasi</a></li>
+                <li><a href="#demo">Demo</a></li>
+            </ul>
+        </nav>
+        
+        <div class="mobile-auth-buttons">
+            <button class="btn btn-outline" id="mobileLoginBtn">Kirish</button>
+            <button class="btn btn-primary" id="mobileRegisterBtn">Ro'yxatdan o'tish</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <section class="hero">
+        <div class="container">
+            <h1>VaultMind AI — Demo</h1>
+            <p>O'zbekistonda bank firibgarligini erta aniqlash uchun AI yordamchi — demo sayt</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="startDemoBtn">
+                    <i class="fas fa-play"></i>
+                    Demo Ko'rish
+                </button>
+                <button class="btn btn-outline" id="contactSalesBtn">
+                    <i class="fas fa-rocket"></i>
+                    Platformani Sinab Ko'rish
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section problem-section" id="problem">
+        <div class="container">
+            <div class="section-title">
+                <h2>🔴 Muammo</h2>
+                <p>O'zbekistonda bank firibgarliklarini erta aniqlash va mijozlarni himoya qilish tizimlari hozirgi paytda kechikib ishlaydi — ko'plab firibgarlik operatsiyalari tranzaksiya tugagach yoki mijoz shikoyat qilgach aniqlanadi.</p>
+            </div>
+            
+            <div class="problem-types">
+                <div class="problem-type">
+                    <h4>Asosiy turlari</h4>
+                    <ul>
+                        <li>Phishing saytlar (login/karta o'g'irlash)</li>
+                        <li>Telegram/WhatsApp orqali yuborilgan skam linklar</li>
+                        <li>Skam qo'ng'iroqlar (SMS kod so'rash)</li>
+                        <li>Onlayn kredit ochish firiblari</li>
+                        <li>Karta orqali avtomatik yechib olish</li>
+                    </ul>
+                    <div class="problem-details">
+                        <p>Phishing saytlar - firibgarlar bank veb-saytlarining soxta nusxalarini yaratib, mijozlarni shaxsiy ma'lumotlarini kiritishga undaydi. Bu eng keng tarqalgan firibgarlik usullaridan biridir.</p>
+                        <p>Telegram/WhatsApp skam linklar - firibgarlar ijtimoiy tarmoqlar orqali "bank" yoki "aksiya" deb nomlangan soxta linklarni yuborib, mijozlarni firibgarlik saytlariga yo'naltiradi.</p>
+                        <p>Skam qo'ng'iroqlar - firibgarlar o'zlarini bank xodimlari deb atashib, mijozlardan SMS kodlarni so'rashadi. Bu kodlar orqali mijozlarning hisob raqamlariga kirish huquqini olishadi.</p>
+                    </div>
+                </div>
+                
+                <div class="problem-type">
+                    <h4>Samaradorlikka ta'siri</h4>
+                    <ul>
+                        <li>Mijozlarning katta mablag' yo'qotishi</li>
+                        <li>Banklarga nisbatan ishonch pasayishi</li>
+                        <li>Onlayn to'lovlardan chekinish</li>
+                    </ul>
+                    <div class="problem-details">
+                        <p>Mijozlarning katta mablag' yo'qotishi - har yili minglab mijozlar firibgarlik qurboniga aylanib, millionlab so'm yo'qotmoqda. Bu nafaqat moliyaviy, balki psixologik zarar ham yetkazadi.</p>
+                        <p>Banklarga nisbatan ishonch pasayishi - firibgarlik hodislari ko'paygani sari mijozlar bank xizmatlariga ishonchlari pasaymoqda, bu esa banklar uchun jiddiy muammo hisoblanadi.</p>
+                        <p>Onlayn to'lovlardan chekinish - firibgarlik qo'rquvi tufayli ko'p mijozlar onlayn to'lov qilishdan qo'rqmoqda, bu esa raqamli iqtisodiyotning rivojlanishiga to'sqinlik qilmoqda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section" id="solution">
+        <div class="container">
+            <div class="section-title">
+                <h2>🔵 Yechim — VaultMind AI</h2>
+                <p>Real vaqtga yaqin monitoring, foydalanuvchi xatti-harakatini tahlil qilish, phishing link va ovozli qo'ng'iroq tahlili uchun AI komponentlari bilan birgalikda ishlovchi platforma.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Real-time Transaction Analyzer</h3>
+                    <p>Atributlar (IP, mamlakat, summa, karta), model scoring</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Har bir tranzaksiyani 200+ parametr bo'yicha tahlil qilish</li>
+                            <li>Anomaliyalarni 0.5 soniya ichida aniqlash</li>
+                            <li>Machine Learning modellari orqali doimiy o'rganish</li>
+                            <li>Foydalanuvchi xatti-harakatlarini tahmin qilish</li>
+                            <li>Qaror qabul qilish uchun aniq ball tizimi</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Behavioral Monitor</h3>
+                    <p>Smartfondagi noodatiy xatti-harakatlarni tahlil qilish (mob-REST integratsiya)</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Foydalanuvchi odatlarini kuzatish va tahmin qilish</li>
+                            <li>Noodatiy joylashuv va vaqtlarni aniqlash</li>
+                            <li>Qurilma fingerprinting texnologiyasi</li>
+                            <li>Biometrik ma'lumotlarni tahlil qilish</li>
+                            <li>Avtomatik xavf ogohlantirishlari</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3>Phishing Link Detector</h3>
+                    <p>Sahifa metrikasi + ML model</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>URL tahlili va xavf baholash</li>
+                            <li>Veb-sahifa kontentini skanerlash</li>
+                            <li>SSL sertifikatlarini tekshirish</li>
+                            <li>Xalqaro firibgarlik bazasi bilan integratsiya</li>
+                            <li>Real-time blokirovka qilish</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Call & Voice Analyzer</h3>
+                    <p>Skam qo'ng'iroqlarini ovoz tahlili bilan aniqlash</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Ovozni qayta ishlash va tahlil qilish</li>
+                            <li>Emotsiyalarni aniqlash texnologiyasi</li>
+                            <li>Ma'lum skam skriptlarni tanib olish</li>
+                            <li>Qo'ng'iroq kontekstini tahlil qilish</li>
+                            <li>Avtomatik ogohlantirish yuborish</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Complaint & Recovery Assistant</h3>
+                    <p>Avtomatik ariza generator va qadamli yo'l-yo'riq</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Avtomatik ariza yaratish</li>
+                            <li>Qonuniy hujjatlarni tayyorlash</li>
+                            <li>Bank va huquqni muhofaza qilish organlari bilan muloqot</li>
+                            <li>Holatni kuzatish va yangilanishlar</li>
+                            <li>Mijozlarni qo'llab-quvvatlash markazi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 3rem;">
+                <h3>Ta'sir</h3>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Firibgarliklar aniqlash tezligi oshishi</div>
+                    <div class="stat-details">
+                        <p>VaultMind AI tizimi an'anaviy usullarga qaraganda 98% yuqori aniqlik darajasiga erishadi. Bu mijozlarni firibgarlikdan himoya qilishda sezilarli yaxshilanish hisoblanadi.</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45%</div>
+                    <div class="stat-label">Mijoz mablag'larini tejash</div>
+                    <div class="stat-details">
+                        <p>Tizim yiliga mijozlarning 45% ko'proq mablag'larini firibgarlikdan himoya qiladi. Bu banklar va mijozlar uchun millionlab so'mni tejash imkonini beradi.</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">60%</div>
+                    <div class="stat-label">Jarayonlarni avtomatlashtirish</div>
+                    <div class="stat-details">
+                        <p>VaultMind AI bank xodimlarining 60% ko'proq vaqtini tejashga yordam beradi, chunki ko'pchilik jarayonlar avtomatlashtirilgan. Bu banklarga operatsion xarajatlarni kamaytirish imkonini beradi.</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Mijoz savodxonligini oshirish</div>
+                    <div class="stat-details">
+                        <p>Tizim mijozlarning xavfsizlik savodxonligini 85% ga oshiradi. Bu esa firibgarlik holatlarining kamayishiga olib keladi va mijozlarning bank xizmatlariga ishonchini oshiradi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section dashboard" id="team">
+        <div class="container">
+            <div class="section-title">
+                <h2>👥 Jamoa </h2>
+                <p>Bizning malakali jamoamiz</p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <h4>Fayzullayev Rahmalullo</h4>
+                    <div class="role">Team Lead, Dizayner</div>
+                    <div class="skills">Node.js, MongoDB, REST</div>
+                    <div class="status">AI500: ro'yxatlangan</div>
+                    <div class="team-details">
+                        <p>Tajribaga ega Middle Developer . Xavfsizlig sohasida ko'plab bilim va konikmalarga ega. AI va ma'lumotlar tahlili bo'yicha ishlay oladi.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <h4>Arabboy Abdurasulov</h4>
+                    <div class="role">Frontend, Backend</div>
+                    <div class="skills">HTML/CSS, Java-script</div>
+                    <div class="status">Portfolio: -</div>
+                    <div class="team-details">
+                        <p>Tajribaga ega veb-dasturchi. UI/UX dizayn va foydalanuvchi interfeyslarini yaratish bo'yicha kuchli ko'nikmalarga ega. HTML, CSS, React va Vue.js freymvorklarida ishlay oladi.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <h4>Yusupov Jamolbek</h4>
+                    <div class="role">Project Manager</div>
+                    <div class="skills">AI/Integration</div>
+                    <div class="status">Sun'iy intellekt bo'yicha mutaxassis</div>
+                    <div class="team-details">
+                        <p>AI va ma'lumotlar tahlili bo'yicha tajribaga ega. Machine Learning modellarini yaratish va integratsiya qilish bo'yicha keng ko'nikmalarga ega.Ko'plab AI loyihalarida qatnashgan.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <h4>Elboboyev Bexruzbek</h4>
+                    <div class="role">Backend</div>
+                    <div class="skills">Bank integratsiya tajribasi</div>
+                    <div class="status">Hozirgi bosqich: Prototip</div>
+                    <div class="team-details">
+                        <p>AI tizimlari integratsiyasi bo'yicha ko'nikmalarga ega. Turli sohalar API'lari bilan ishlash va xavfsiz ulanishlarni o'rnatish bo'yicha keng tajribaga ega.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 2rem;">
+                <p style="font-size: 0.9rem; color: var(--warning);">Eslatma: AI500 talabiga binoan barcha a'zolar Telegram bot orqali ro'yxatdan o'tgan.</p>
+            </div>
+        </div>
+    </section>
+
+ 
+    <section class="section" id="roadmap">
+        <div class="container">
+            <div class="section-title">
+                <h2>🗺️ Yo'l xaritasi (bosqichlar)</h2>
+                <p>Loyihaning rivojlanish bosqichlari</p>
+            </div>
+            
+            <div class="roadmap-timeline">
+                <div class="roadmap-item current">
+                    <h4>Hozirgi bosqich: Prototip & demo (JS & frontend widgetlar)</h4>
+                    <p>Yakunlangan</p>
+                    <div class="roadmap-details">
+                        <p>Prototip yaratish va frontend interfeysni ishlab chiqish. Demo versiya tayyorlash va foydalanuvchilarga ko'rsatish. Dastlabki fikr-mulohazalarni yig'ish va tizimni takomillashtirish.</p>
+                    </div>
+                </div>
+                
+                <div class="roadmap-item">
+                    <h4>Qisqa muddat: AI model server integratsiyasi</h4>
+                    <p>Real-time tranzaksiya stream testing (1-2 oy)</p>
+                    <div class="roadmap-details">
+                        <p>AI modellarini serverga integratsiya qilish. Real vaqt rejimida tranzaksiyalarni tahlil qilishni sinovdan o'tkazish. Tizimning ishlash tezligi va aniqligini o'lchash.</p>
+                    </div>
+                </div>
+                
+                <div class="roadmap-item">
+                    <h4>O'rta muddat: Bank bilan pilot loyiha</h4>
+                    <p>Ovoz/telephony tahlili (3-6 oy)</p>
+                    <div class="roadmap-details">
+                        <p>Bir yoki bir nechta banklar bilan hamkorlikda pilot loyihani boshlash. Ovozli qo'ng'iroqlarni tahlil qilish funksiyasini joriy etish. Tizimning haqiqiy sharoitda ishlashini sinovdan o'tkazish.</p>
+                    </div>
+                </div>
+                
+                <div class="roadmap-item">
+                    <h4>Uzoq muddat: Milliy skaner va threat intel integratsiyasi</h4>
+                    <p>Regulator bilan hamkorlik</p>
+                    <div class="roadmap-details">
+                        <p>Milliy xavfsizlik skanerini yaratish va xavf ma'lumotlar bazasi bilan integratsiya. Markaziy bank va boshqa regulyator organlar bilan hamkorlik. Tizimni butun mamlakat bo'yicha joriy etish.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section demo-tools" id="demo">
+        <div class="container">
+            <div class="section-title">
+                <h2>🧪 Demo vositalar (soddalashtirilgan)</h2>
+                <p>VaultMind AI imkoniyatlarini sinab ko'ring</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3><i class="fas fa-search"></i> Soddalashtirilgan Fraud Detector</h3>
+                    <p>URL, tranzaksiya ta'rifi yoki e-mail matnini kiriting — demo faqat kalit so'zlar va qoidalar asosida baholaydi (real AI integratsiyasi serverda bo'ladi).</p>
+                    
+                    <div class="form-group">
+                        <label for="fraudInput">Kirish (URL / e-mail / transaction):</label>
+                        <input type="text" id="fraudInput" class="form-control" placeholder=" Введите карту...">
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" id="checkFraudBtn">
+                            <span class="btn-text">Tekshir</span>
+                            <div class="loading" style="display: none;"></div>
+                        </button>
+                        <button class="btn btn-outline" id="clearFraudBtn">Tozalash</button>
+                    </div>
+                    
+                    <div class="result-box" id="fraudResult">
+                        Natija: -
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3><i class="fas fa-file-alt"></i> Complaint Generator (Avtomatik ariza)</h3>
+                    <p>Soddalashtirilgan rasmiy ariza matnini yaratadi — nusxa ko'pchilik banklar uchun moslashtiriladi.</p>
+                    
+                    <div class="form-group">
+                        <label for="clientName">Ism va Familiya:</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="Masalan: Arabboy Abdurasulov">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bankName"> Bank nomi:</label>
+                        <input type="text" id="bankName" class="form-control" placeholder="Masalan: Xalq Bank">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="issueDesc">Muammo (qisqacha):</label>
+                        <textarea id="issueDesc" class="form-control" placeholder="Masalan: Telegram link orqali 2,000,000 so'm o'g'irlandi"></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" id="generateComplaintBtn">Ariza yarat</button>
+                        <button class="btn btn-outline" id="copyComplaintBtn">Nusxa</button>
+                    </div>
+                    
+                    <div class="result-box" id="complaintResult">
+                        Ariza natijasi shu yerda ko'rinadi...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 3rem;">
+                <h3>🚨 Tezkor yo'riqnomalar</h3>
+            </div>
+            
+            <div class="guides-grid">
+                <div class="guide-item">
+                    <div class="number">1</div>
+                    <p>Karta kodlarini (SMS/OTP) hech kimga bermang</p>
+                    <div class="guide-details">
+                        <p>Bank xodimlari ham sizdan SMS kodlarni so'ramaydi. Agar kimdir sizdan SMS kodni so'rasa, bu firibgar bo'lishi mumkin. Hech qachon SMS kodlarni hech kimga bermang va darhol bank bilan bog'laning.</p>
+                    </div>
+                </div>
+                
+                <div class="guide-item">
+                    <div class="number">2</div>
+                    <p>"Bankdan kelgan" deb jo'natilgan linkni ochmang — rasmiy ilovani tekshiring</p>
+                    <div class="guide-details">
+                        <p>Firibgarlar ko'pincha bank nomidan SMS yoki ijtimoiy tarmoqlar orqali linklar yuborishadi. Bu linklar sizni soxta sahifalarga yo'naltiradi. Har doim bankning rasmiy ilovasiga o'ting yoki veb-saytiga to'g'ridan-to'g'ri kirish uchun manzilni qo'lda kiriting.</p>
+                    </div>
+                </div>
+                
+                <div class="guide-item">
+                    <div class="number">3</div>
+                    <p>Shubhali vaziyatda darhol bank aloqaga chiqing</p>
+                    <div class="guide-details">
+                        <p>Agar siz firibgarlik qurboni bo'lganingizdan shubhalansangiz, darhol bankning rasmiy qo'llab-quvvatlash xizmatiga murojaat qiling. Tez harakat qilish sizning mablag'laringizni himoya qilish imkoniyatini oshiradi. Bank xodimlari sizga kerakli yo'riqnomalarni beradi va zarur choralarni ko'radi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>VaultMind AI</h3>
+                    <p>Bank xavfsizligi uchun yetakchi AI yechimlar platformasi</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Xizmatlar</h3>
+                    <ul>
+                        <li><a href="#">Tranzaksiya Monitoringi</a></li>
+                        <li><a href="#">Phishing Aniqlash</a></li>
+                        <li><a href="#">Ovozli Qo'ng'iroq Tahlili</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Aloqa</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Toshkent, O'zbekiston</li>
+                        <li><i class="fas fa-phone"></i> +998 77 083 69 05</li>
+                        <li><i class="fas fa-envelope"></i> arabboyathlete65@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 VaultMind AI. Demo sayt.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+        const overlay = document.getElementById('overlay');
+        
+        function openMobileMenu() {
+            mobileMenu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        mobileMenuToggle.addEventListener('click', openMobileMenu);
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+        overlay.addEventListener('click', closeMobileMenu);
+        
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Expandable cards functionality
+        document.querySelectorAll('.feature-card, .stat-card, .problem-type, .team-member, .roadmap-item, .guide-item').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('expanded');
+            });
+        });
+
+        document.getElementById('checkFraudBtn').addEventListener('click', function() {
+            const inputText = document.getElementById('fraudInput').value.toLowerCase();
+            const resultBox = document.getElementById('fraudResult');
+            const btn = this;
+            const btnText = btn.querySelector('.btn-text');
+            const loading = btn.querySelector('.loading');
+            
+            if (!inputText) {
+                resultBox.innerHTML = '<span style="color: var(--warning)">Iltimos, matn kiriting</span>';
+                return;
+            }
+
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                const highRiskKeywords = ['karta', 'parol', 'kod', 'sms', 'otp', 'акция', 'введите', 'переводите'];
+                const mediumRiskKeywords = ['bonus', 'sovrin', 'yutdingiz', 'pul', 'naqd'];
+                
+                let riskScore = 0;
+                let detectedKeywords = [];
+                
+                highRiskKeywords.forEach(keyword => {
+                    if (inputText.includes(keyword)) {
+                        riskScore +=10;
+                        detectedKeywords.push(keyword);
+                    }
+                });
+                
+                mediumRiskKeywords.forEach(keyword => {
+                    if (inputText.includes(keyword)) {
+                        riskScore +=5;
+                        detectedKeywords.push(keyword);
+                    }
+                });
+                
+                let riskLevel, riskColor;
+                
+                if (riskScore >= 10) {
+                    riskLevel = "YUQORI XAVF";
+                    riskColor = "var(--danger)";
+                } else if (riskScore >= 5) {
+                    riskLevel = "O'RTA XAVF";
+                    riskColor = "var(--warning)";
+                } else {
+                    riskLevel = "PAST XAVF";
+                    riskColor = "var(--secondary)";
+                }
+                
+                resultBox.innerHTML = `
+                    <div style="margin-bottom: 8px; animation: slideUp 0.5s ease-out;">
+                        <strong>Xavf darajasi:</strong> <span style="color: ${riskColor}">${riskLevel}</span>
+                    </div>
+                    <div style="margin-bottom: 8px; animation: slideUp 0.5s ease-out 0.1s both;">
+                        <strong>Aniqlangan kalit so'zlar:</strong> ${detectedKeywords.length > 0 ? detectedKeywords.join(', ') : 'Yo\'q'}
+                    </div>
+                    <div style="animation: slideUp 0.5s ease-out 0.2s both;">
+                        <strong>Xavf balli:</strong> ${riskScore}/20
+                    </div>
+                `;
+
+                btnText.style.display = 'inline-block';
+                loading.style.display = 'none';
+                btn.disabled = false;
+            }, 1500);
+        });
+
+        document.getElementById('clearFraudBtn').addEventListener('click', function() {
+            document.getElementById('fraudInput').value = '';
+            document.getElementById('fraudResult').innerHTML = 'Natija: -';
+        });
+
+        document.getElementById('generateComplaintBtn').addEventListener('click', function() {
+            const name = document.getElementById('clientName').value || 'Arabboy Abdurasulov';
+            const bank = document.getElementById('bankName').value || 'Xalq Banki';
+            const issue = document.getElementById('issueDesc').value || 'Telegram link orqali 2,000,000 so\'m o\'g\'irlandi';
+            
+            const today = new Date().toLocaleDateString('uz-UZ');
+            
+            const complaintText = `
+Sana: ${today}
+
+Hurmatli ${bank} ma'muriyati,
+
+Mening ismim ${name}. Sizga quyidagi muammo haqida murojaat qilmoqdaman:
+
+${issue}
+
+Iltimos, ushbu masalani tekshirib, kerakli choralarni ko'ring.
+
+Hurmat bilan,
+${name}
+            `;
+            
+            document.getElementById('complaintResult').innerHTML = complaintText.replace(/\n/g, '<br>');
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Yaratildi!';
+            btn.style.background = 'var(--secondary)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        });
+
+        document.getElementById('copyComplaintBtn').addEventListener('click', function() {
+            const complaintText = document.getElementById('complaintResult').innerText;
+            
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = complaintText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Nusxalandi!';
+            btn.style.background = 'var(--secondary)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        });
+
+        document.querySelectorAll('nav a, .mobile-nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        document.getElementById('startDemoBtn').addEventListener('click', function() {
+            document.getElementById('demo').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { 
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.feature-card, .tool-card, .dashboard-content, .dashboard-image, .analytics-card, .transaction-list, .alert-container, .footer-column, .section-title h2, .section-title p, .problem-type, .team-member, .roadmap-item, .guide-item').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        document.querySelectorAll('.btn, .feature-card, .transaction-item, .alert-item, .problem-type, .team-member, .guide-item').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                this.style.transform = this.style.transform + ' scale(1.02)';
+            });
+            
+            el.addEventListener('mouseleave', function() {
+                this.style.transform = this.style.transform.replace(' scale(1.02)', '');
+            });
+        });
+
+        function updateStats() {
+            const stats = document.querySelectorAll('.stat-value');
+            stats.forEach(stat => {
+                const currentValue = parseInt(stat.textContent);
+                if (!isNaN(currentValue)) {
+                    const newValue = currentValue + Math.floor(Math.random() * 3) - 1;
+                    stat.textContent = Math.max(95, Math.min(99, newValue)) + '%';
+                }
+            });
+        }
+
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+</html> 
